@@ -1,94 +1,86 @@
 const express = require('express');
 const router = express.Router();
-
 const conexion = require('./database/db');
 
 router.get('/', (req, res) => {
-    conexion.query('SELECT * FROM estudiantes', (error, results) => {
-        if (error) {
-            throw error;
-        } else {
-            res.render('index.ejs', { results: results });
-        }
-    })
+  conexion.query('SELECT * FROM estudiante', (error, results) => {
+    if (error) {
+      throw error;
+    } else {
+      res.render('index.ejs', { results: results });
+    }
+  })
 })
+
 router.get('/create', (req, res) => {
-    res.render('create');
-})
-router.get('/diplomados', (req, res) => {
-    //res.render('diplomados')
-    conexion.query('SELECT * FROM diplomados', (error, results) => {
-        if (error) {
-            throw error;
-        } else {
-            res.render('diplomados.ejs', { results: results })
-        }
-    })
+  res.render('create');
 })
 
 router.get('/edit/:id_estudiantes', (req, res) => {
-    const id = req.params.id_estudiantes;
-    conexion.query('SELECT * FROM estudiantes WHERE id_estudiantes=?', [id], (error, results) => {
-        if (error) {
-            throw error;
-        } else {
-            res.render('edit.ejs', { estudiantes: results[0] });
-        }
-    });
+  const id = req.params.id_estudiantes;
+  conexion.query('SELECT * FROM estudiantes WHERE id_estudiantes=?', [id], (error, results) => {
+    if (error) {
+      throw error;
+    } else {
+      res.render('edit.ejs', { estudiantes: results[0] });
+    }
+  });
 });
 
 router.get('/delete/:id_estudiantes', (req, res) => {
-    const id = req.params.id_estudiantes;
-    conexion.query('DELETE FROM estudiantes WHERE id_estudiantes = ?', [id], (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.redirect('/estudiantes');
-        }
-    })
+  const id = req.params.id_estudiante;
+  conexion.query('DELETE FROM estudiantes WHERE id_estudiantes = ?', [id], (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.redirect('/estudiantes');
+    }
+  })
 });
 
 
-router.get('/createDIPLO', (req, res) => {
-    res.render('createDIPLO')
-})
+router.get(['/selection/:codigo_registro', '/search'], (req, res) => {
+  const codigo_registro = req.params.codigo_registro;
+  const busqueda_dni = req.query.busqueda_dni;
+  const busqueda_nombres = req.query.busqueda_nombres;
+  const busqueda_codigo = req.query.busqueda_codigo;
+  let consulta;
+  let busqueda;
 
-router.get('/editDIPLO/:id_diplomados', (req, res) => {
-    const id = req.params.id_diplomados;
-    conexion.query('SELECT * FROM diplomados WHERE id_diplomados=?', [id], (error, results) => {
-        if (error) {
-            throw error;
-        } else {
-            res.render('editDIPLO.ejs', { diplomados: results[0] });
+  if (codigo_registro) {
+    consulta = 'SELECT e.nombre, c.nombre_curso, c.instituciones, c.duracion, ce.fecha_emitido, c.horas FROM estudiante e INNER JOIN certificado ce ON e.id_estudiante = ce.id_estudiante INNER JOIN curso c ON ce.id_curso = c.id_curso WHERE ce.codigo_registro = ?;';
+    busqueda = codigo_registro;
+  } else if (busqueda_dni) {
+    consulta = 'SELECT e.nombre, c.nombre_curso, c.instituciones, c.duracion, ce.fecha_emitido, ce.codigo_registro FROM estudiante e INNER JOIN certificado ce ON e.id_estudiante = ce.id_estudiante INNER JOIN curso c ON ce.id_curso = c.id_curso WHERE e.dni = ?;';
+    busqueda = busqueda_dni;
+  } else if (busqueda_nombres) {
+    consulta = 'SELECT e.nombre, c.nombre_curso, c.instituciones, c.duracion, ce.fecha_emitido, ce.codigo_registro FROM estudiante e INNER JOIN certificado ce ON e.id_estudiante = ce.id_estudiante INNER JOIN curso c ON ce.id_curso = c.id_curso WHERE e.nombre = ?;';
+    busqueda = busqueda_nombres;
+  } else if (busqueda_codigo) {
+    consulta = 'SELECT e.nombre, c.nombre_curso, c.instituciones, c.duracion, ce.fecha_emitido , c.horas FROM estudiante e INNER JOIN certificado ce ON e.id_estudiante = ce.id_estudiante INNER JOIN curso c ON ce.id_curso = c.id_curso WHERE ce.codigo_registro = ?;';
+    busqueda = busqueda_codigo;
+  } else {
+    results = '';
+    return res.render('search', [results]);
+  }
 
-        }
-    });
+  conexion.query(consulta, [busqueda], (error, results) => {
+    if (error) {
+      console.log(error);
+      return res.render('search');
+    } else {
+      return res.render('search', { results });
+    }
+  });
 });
-router.get('/delDiplo/:id_diplomados', (req, res) => {
-    const id = req.params.id_diplomados;
-    conexion.query('DELETE FROM diplomados WHERE id_diplomados =?', [id], (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.redirect('/diplomados');
-        }
-    })
-})
-router.get('/especializacion',(req,res)=>{
-    res.render('especializacion')
-})
-
-
 
 
 
 const crud = require('./controllers/crud');
+const { VarChar } = require('mssql');
+const { restart } = require('nodemon');
 
 router.post('/save', crud.save);
 router.post('/update', crud.update);
-//diplomados routes
-
-router.post('/save_diplomados', crud.save_diplomados);
-router.post('/update_diplomados', crud.update_diplomados);
 
 module.exports = router;

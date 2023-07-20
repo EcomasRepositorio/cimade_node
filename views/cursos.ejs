@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <table id="table_estudiantes" class="table table">
+    <thead>
+      <tr id="table_head">
+        <th scope="col">NUMERO</th>
+        <th scope="col">EVENTO</th>
+        <th scope="col">ESTUDIANTE</th>
+        <th scope="col">FECHA</th>
+      </tr>
+    </thead>
+    <h1 class="text-center">Resultados de la búsqueda</h1>
+    <% let i=0; %>
+      <% results.forEach(estudiante=> { %>
+        <% i++; %>
+          <tbody id="tbody">
+              <tr>
+                <td><%= i %></td>
+                <td><%= estudiante.nombre_curso %></td>
+                <td><%= estudiante.nombre %></td>
+                <td><%= new Date(estudiante.fecha_emitido).toLocaleDateString('es-PE', { day: '2-digit' , month: '2-digit', year: 'numeric' }).replace(/ /g, ' / ' ) %></td>
+              </tr>
+            </a>
+          </tbody>
+
+          <% }); %>
+  </table>
+
+</body>
+
+</html>

@@ -33,38 +33,76 @@
       <div class="card-body">
         <form action="/save" method="POST">
           <div class="mb-3">
-            <label for="nombres" class="form-label">Nombre</label>
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni" name="dni" tabindex="1">
+          </div>
+          <div class="mb-3">
+            <label for="nombres" class="form-label">Nombres y apellidos</label>
             <input type="text" class="form-control" id="nombres" name="nombres" tabindex="1">
           </div>
-          <div class="apellidopat">
-            <label for="apellidopat" class="form-label">Apellido paterno</label>
-            <input type="text" class="form-control" id="apellidopat" name="apellidopat" tabindex="1" >
+          <div class="mb-3">
+            <label for="fecha_nac" class="form-label">Fecha de nacimiento</label>
+            <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" tabindex="1">
           </div>
           <div class="mb-3">
-            <label for="apellidopat" class="form-label">Apellido materno</label>
-            <input type="text" class="form-control" id="apellidomat" name="apellidomat" tabindex="1" >
+            <label for="genero" class="form-label">Género</label>
+            <select id="genero" name="genero">
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+            </select>
           </div>
+
           <div class="mb-3">
-            <label for="dni" class="form-label">Dni</label>
-            <input type="text" class="form-control" id="dni" name="dni" tabindex="1" >
+            <label for="Direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" tabindex="1">
+          </div>
+
+          <div class="mb-3">
+            <label for="pais" class="form-label">País</label>
+            <select id="pais" name="pais">
+              <option value="Perú">Perú</option>
+              <option value="Argentina">Argentina</option>
+              <option value="Canadá">Canadá</option>
+              <option value="Estados Unidos">Estados Unidos</option>
+              <option value="México">México</option>
+              <option value="Brasil">Brasil</option>
+              <option value="Colombia">Colombia</option>
+              <option value="Venezuela">Venezuela</option>
+              <option value="Chile">Chile</option>
+              <option value="Ecuador">Ecuador</option>
+              <option value="Bolivia">Bolivia</option>
+              <option value="Paraguay">Paraguay</option>
+              <option value="Uruguay">Uruguay</option>
+              <option value="Costa Rica">Costa Rica</option>
+              <option value="El Salvador">El Salvador</option>
+              <option value="Guatemala">Guatemala</option>
+              <option value="Honduras">Honduras</option>
+              <option value="Nicaragua">Nicaragua</option>
+              <option value="Panamá">Panamá</option>
+              <option value="Puerto Rico">Puerto Rico</option>
+              <option value="República Dominicana">República Dominicana</option>
+              <option value="Cuba">Cuba</option>
+            </select>
           </div>
           <div class="mb-3">
             <label for="ciudad" class="form-label">Ciudad</label>
-            <input type="text" class="form-control" id="ciudad" name="ciudad" tabindex="1" >
-          </div>
-          <div class="mb-3">
-            <label for="telefono" class="form-label">Telefono</label>
-            <input type="text" class="form-control" id="telefono" name="telefono" tabindex="1" >
-          </div>
-          <div class="mb-3">
-            <label for="whatsapp" class="form-label">Whatsapp</label>
-            <input type="text" class="form-control" id="whatsapp" name="whatsapp" tabindex="1">
-          </div>
-          <div class="mb-3">
-            <label for="correo" class="form-label">Correo</label>
-            <input type="text" class="form-control" id="correo" name="correo" tabindex="1" >
+            <input type="text" class="form-control" id="ciudad" name="ciudad" tabindex="1">
           </div>
 
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Telefono</label>
+            <input type="text" class="form-control" id="numero_telefono" name="numero_telefono" tabindex="1">
+          </div>
+
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo</label>
+            <input type="text" class="form-control" id="correo_electronico" name="correo_electronico" tabindex="1">
+          </div>
+
+          <div class="mb-3">
+            <label for="fecha_nac" class="form-label">Fecha de inscripcion</label>
+            <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" tabindex="1">
+          </div>
 
           <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
           <a href="/" class="btn btn-secondary">Cancelar</a>
