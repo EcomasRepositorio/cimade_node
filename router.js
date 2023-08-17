@@ -3,6 +3,9 @@ const router = express.Router();
 const conexion = require('./database/db');
 const multer = require('multer');
 const path = require('path');
+const pathModule = require('path');
+const cron = require('node-cron');
+const fs = require('fs');
 
 // File upload configuration
 const storage = multer.diskStorage({
@@ -124,6 +127,45 @@ router.delete("/students/delete/:codigo",(req, res) => {
 });
 
 /* forms */
+
+
+cron.schedule('* * * * *', () => {
+  const directory = 'IMG_BANNER_ECOMAS/';
+  const thresholdTime = 30 * 24 * 60 * 60 * 1000; // Un mes en milisegundos
+
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+
+    const currentTime = Date.now();
+
+    files.forEach(file => {
+      const filePath = pathModule.join(directory, file); 
+      fs.stat(filePath, (err, stats) => {
+        if (err) throw err;
+
+        const fileCreateTime = new Date(stats.birthtime).getTime();
+        if (currentTime - fileCreateTime > thresholdTime) {
+          fs.unlink(filePath, err => {
+            if (err) throw err;
+            console.log(`Archivo ${file} eliminado.`);
+
+            // Eliminar el registro en la base de datos
+            const sqlDelete = "DELETE FROM `formularios` WHERE `banner` = ?";
+            const imageName = pathModule.basename(filePath); // Usar 'pathModule' en lugar de 'path'
+            
+            conexion.query(sqlDelete, [imageName], (deleteErr, deleteResult) => {
+              if (deleteErr) {
+                console.error("Error al eliminar el registro en la base de datos:", deleteErr);
+              } else {
+                console.log("Registro en la base de datos eliminado.");
+              }
+            });
+          });
+        }
+      });
+    });
+  });
+});
 
 router.get("/forms", (req, res) => {
   conexion.query("SELECT * FROM formularios", (error, results) => {
