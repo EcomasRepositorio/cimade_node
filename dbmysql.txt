@@ -1,0 +1,86 @@
+
+--
+-- Base de datos: `ecomas_db`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `formularios`
+--
+
+CREATE TABLE `formularios` (
+  `id` int(11) NOT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `formularios`
+--
+
+INSERT INTO `formularios` (`id`, `link`, `banner`) VALUES
+(1, 'hola.com', 'image-1692397621953-782067379.png');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `participantes`
+--
+
+CREATE TABLE `participantes` (
+  `id` int(11) NOT NULL,
+  `DNI` int(255) DEFAULT NULL,
+  `Nombre` varchar(255) DEFAULT NULL,
+  `Codigo` varchar(255) DEFAULT NULL,
+  `ActividadAcademica` varchar(255) DEFAULT NULL,
+  `Participacion` varchar(255) DEFAULT NULL,
+  `Instituciones` varchar(255) DEFAULT NULL,
+  `Horas` varchar(255) DEFAULT NULL,
+  `Fecha` varchar(255) DEFAULT NULL,
+  `pdf` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `participantes`
+--
+
+INSERT INTO `participantes` (`id`, `DNI`, `Nombre`, `Codigo`, `ActividadAcademica`, `Participacion`, `Instituciones`, `Horas`, `Fecha`, `pdf`) VALUES
+(2, 1202124, 'Arturo Gomez Chavez', '20210108', 'curso: INGENIERIA VIAL', 'Asistente', 'ecomas EPG-UNP', '24 CREDITOS', '12/12/2022', '');
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `formularios`
+--
+ALTER TABLE `formularios`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `participantes`
+--
+ALTER TABLE `participantes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `formularios`
+--
+ALTER TABLE `formularios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `participantes`
+--
+ALTER TABLE `participantes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
