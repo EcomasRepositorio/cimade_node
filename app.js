@@ -12,5 +12,5 @@ app.use('/pdfs', express.static(path.join(__dirname, 'PDF_ECOMAS')));
 
 
 app.listen(8000, () => {
-  console.log('SERVER Running in http://localhost:8000');
+  console.log('SERVER Running in http://146.190.43.175:8000');
 });
