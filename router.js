@@ -167,7 +167,7 @@ cron.schedule('* * * * *', () => {
   });
 });
 
-router.get("/forms", (req, res) => {
+router.get("/app/forms", (req, res) => {
   conexion.query("SELECT * FROM formularios", (error, results) => {
     if (error) {
       throw error;
