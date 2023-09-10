@@ -44,11 +44,6 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
     Fecha,
   } = req.body;
 
-  // Verificar si req.body está vacío o nulo
-  if (!DNI || !Nombre || !Codigo || !ActividadAcademica || !Participacion || !Instituciones || !Horas || !Fecha) {
-    return res.status(400).json({ error: "Los datos del estudiante son incompletos" });
-  }
-
   const pdf = req.file ? req.file.filename : '';
 
   const codeQuery = "SELECT * FROM participantes WHERE Codigo = ?";
