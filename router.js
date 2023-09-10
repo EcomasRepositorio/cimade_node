@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-router.get("/students", (req, res) => {
+router.get("/server/students", (req, res) => {
   conexion.query("SELECT * FROM participantes", (error, results) => {
     if (error) {
       throw error;
@@ -32,7 +32,7 @@ router.get("/students", (req, res) => {
   });
 });
 
-router.post('/students/save', upload.single('PDF'), async (req, res) => {
+router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
   const {
     DNI,
     Nombre,
@@ -110,7 +110,7 @@ router.post('/students/save', upload.single('PDF'), async (req, res) => {
 });
 
 
-router.delete("/students/delete/:codigo",(req, res) => {
+router.delete("/server/students/delete/:codigo",(req, res) => {
   const studentCodigo = req.params.codigo;
   const deleteQuery = "DELETE FROM participantes WHERE Codigo = ?";
   conexion.query(deleteQuery, [studentCodigo], (error, results) => {
@@ -167,7 +167,7 @@ cron.schedule('* * * * *', () => {
   });
 });
 
-router.get("/app/forms", (req, res) => {
+router.get("/server/forms", (req, res) => {
   conexion.query("SELECT * FROM formularios", (error, results) => {
     if (error) {
       throw error;
@@ -177,7 +177,7 @@ router.get("/app/forms", (req, res) => {
   });
 });
 
-router.use('/img', express.static('IMG_BANNER_ECOMAS'));
+router.use('/server/img', express.static('IMG_BANNER_ECOMAS'));
 
 
 const storageImg = multer.diskStorage({
@@ -193,7 +193,7 @@ const storageImg = multer.diskStorage({
 
 const uploadImg = multer({ storage: storageImg }); // Use storageImg instead of storage
 
-router.post("/formulario/add", uploadImg.single("image"), (req, res) => {
+router.post("/server/formulario/add", uploadImg.single("image"), (req, res) => {
   const { url } = req.body;
   const imageName = req.file ? req.file.filename : null; // Get the saved image name
 
