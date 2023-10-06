@@ -24,10 +24,10 @@ function importarEstudiantesDesdeExcel(nombreArchivo) {
         const updateQuery = "UPDATE students SET ? WHERE codigo = ?";
         conexion.query(updateQuery, [estudiante, estudiante.codigo], (error, result) => {
           if (error) {
-            console.error("Error al actualizar el estudiante en la base de datos:", error);
+            console.error("Error al actualizar el estudiante en la base de datosxdxdxd:", error);
             return;
           }
-          console.log("Estudiante actualizado correctamente:", estudiante.codigo);
+          console.log("Estudiante actualizado correctamentexdxddx:", estudiante.codigo);
         });
       } else {
         // El estudiante no existe, así que lo inserta en la base de datos
