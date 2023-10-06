@@ -33,8 +33,6 @@ router.get("/server/students", (req, res) => {
 });
 
 
-
-
 router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
   const {
     DNI,
@@ -49,7 +47,7 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
 
   // Verificar si el campo "Codigo" es nulo o está vacío
   if (!Codigo) {
-    return res.status(400).json({ error: "" });
+    return res.status(400).json({ error: "El campo 'Codigo' es obligatorio" });
   }
 
   const pdf = req.file ? req.file.filename : '';
