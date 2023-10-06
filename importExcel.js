@@ -9,30 +9,37 @@ function importarEstudiantesDesdeExcel(nombreArchivo) {
   // Convertir el contenido del archivo Excel en un objeto JSON
   const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-  // Recorrer el objeto JSON y agregar cada estudiante a la base de datos
+  // Recorrer el objeto JSON y agregar o actualizar cada estudiante en la base de datos
   jsonData.forEach((estudiante) => {
-    // Verificar si el estudiante ya existe en la base de datos
-    const query = "SELECT * FROM students WHERE dni = ?";
-    conexion.query(query, [estudiante.dni], (error, results) => {
+    // Verificar si el código del estudiante ya existe en la base de datos
+    const query = "SELECT * FROM students WHERE codigo = ?";
+    conexion.query(query, [estudiante.codigo], (error, results) => {
       if (error) {
         console.error("Error al consultar la base de datos:", error);
         return;
       }
 
       if (results.length > 0) {
-        console.log("El estudiante ya existe:", estudiante.dni);
-        return;
+        // El estudiante ya existe, entonces actualiza los datos
+        const updateQuery = "UPDATE students SET ? WHERE codigo = ?";
+        conexion.query(updateQuery, [estudiante, estudiante.codigo], (error, result) => {
+          if (error) {
+            console.error("Error al actualizar el estudiante en la base de datos:", error);
+            return;
+          }
+          console.log("Estudiante actualizado correctamente:", estudiante.codigo);
+        });
+      } else {
+        // El estudiante no existe, así que lo inserta en la base de datos
+        const insertQuery = "INSERT INTO students SET ?";
+        conexion.query(insertQuery, estudiante, (error, result) => {
+          if (error) {
+            console.error("Error al guardar el estudiante en la base de datos:", error);
+            return;
+          }
+          console.log("Estudiante insertado correctamente:", estudiante.codigo);
+        });
       }
-
-      // Insertar el estudiante en la base de datos
-      const insertQuery = "INSERT INTO students SET ?";
-      conexion.query(insertQuery, estudiante, (error, result) => {
-        if (error) {
-          console.error("Error al guardar el estudiante en la base de datos:", error);
-          return;
-        }
-        console.log("Estudiante insertado correctamente:", estudiante.dni);
-      });
     });
   });
 }
