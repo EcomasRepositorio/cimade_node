@@ -44,6 +44,11 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
     Fecha,
   } = req.body;
 
+  // Verificar si el campo "Codigo" es nulo o está vacío
+  if (!Codigo) {
+    return res.status(400).json({ error: "El campo 'Codigo' es obligatorio" });
+  }
+
   const pdf = req.file ? req.file.filename : '';
 
   const codeQuery = "SELECT * FROM participantes WHERE Codigo = ?";
@@ -108,6 +113,7 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
     }
   });
 });
+
 
 
 router.delete("/server/students/delete/:codigo",(req, res) => {
