@@ -10,7 +10,7 @@ const fs = require('fs');
 // File upload configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'PDF_ECOMAS/'); // The folder where PDFs will be saved on the server
+    cb(null, 'PDF_CIMADE/'); // The folder where PDFs will be saved on the server
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -85,7 +85,7 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
   }
 });
 
-// Función para obtener un estudiante por código
+//  estudiante por código
 function getStudentByCode(code) {
   return new Promise((resolve, reject) => {
     const codeQuery = "SELECT * FROM participantes WHERE Codigo = ?";
@@ -99,7 +99,7 @@ function getStudentByCode(code) {
   });
 }
 
-// Función para actualizar un estudiante existente
+//actualizar un estudiante 
 function updateStudent(id, data) {
   return new Promise((resolve, reject) => {
     const query = `UPDATE participantes SET ? WHERE id = ?`;
@@ -113,7 +113,7 @@ function updateStudent(id, data) {
   });
 }
 
-// Función para guardar un nuevo estudiante
+// guardar  estudiante
 function saveStudent(data) {
   return new Promise((resolve, reject) => {
     const query = `INSERT INTO participantes SET ?`;
@@ -142,91 +142,6 @@ router.delete("/server/students/delete/:codigo",(req, res) => {
     }
 
     res.json({ message: "Estudiante eliminado exitosamente" });
-  });
-});
-
-/* forms */
-
-
-cron.schedule('* * * * *', () => {
-  const directory = 'IMG_BANNER_ECOMAS/';
-  const thresholdTime = 30 * 24 * 60 * 60 * 1000; // Un mes en milisegundos
-
-  fs.readdir(directory, (err, files) => {
-    if (err) throw err;
-
-    const currentTime = Date.now();
-
-    files.forEach(file => {
-      const filePath = pathModule.join(directory, file); 
-      fs.stat(filePath, (err, stats) => {
-        if (err) throw err;
-
-        const fileCreateTime = new Date(stats.birthtime).getTime();
-        if (currentTime - fileCreateTime > thresholdTime) {
-          fs.unlink(filePath, err => {
-            if (err) throw err;
-            console.log(`Archivo ${file} eliminado.`);
-
-            // Eliminar el registro en la base de datos
-            const sqlDelete = "DELETE FROM `formularios` WHERE `banner` = ?";
-            const imageName = pathModule.basename(filePath); // Usar 'pathModule' en lugar de 'path'
-            
-            conexion.query(sqlDelete, [imageName], (deleteErr, deleteResult) => {
-              if (deleteErr) {
-                console.error("Error al eliminar el registro en la base de datos:", deleteErr);
-              } else {
-                console.log("Registro en la base de datos eliminado.");
-              }
-            });
-          });
-        }
-      });
-    });
-  });
-});
-
-router.get("/server/forms", (req, res) => {
-  conexion.query("SELECT * FROM formularios", (error, results) => {
-    if (error) {
-      throw error;
-    } else {  
-      res.send({ results: results });
-    }
-  });
-});
-
-router.use('/server/img', express.static('IMG_BANNER_ECOMAS'));
-
-
-const storageImg = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "IMG_BANNER_ECOMAS/"); // The folder where the images will be stored
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const extension = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + extension);
-  },
-});
-
-const uploadImg = multer({ storage: storageImg }); // Use storageImg instead of storage
-
-router.post("/server/formulario/add", uploadImg.single("image"), (req, res) => {
-  const { url } = req.body;
-  const imageName = req.file ? req.file.filename : null; // Get the saved image name
-
-  // Save the image name and link in the database
-  const sql = "INSERT INTO `formularios` (`id`, `link`, `banner`) VALUES (NULL, ?, ?);";
-  const values = [url, imageName];
-
-  conexion.query(sql, values, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: "Error al guardar en la base de datos." });
-    } else {
-      const imageUrl = req.protocol + "://" + req.get("host") + "/img/" + imageName; // Construct the image URL
-      res.json({ message: "Datos guardados con éxito.", imageUrl }); // Send the image URL in the response
-    }
   });
 });
 
