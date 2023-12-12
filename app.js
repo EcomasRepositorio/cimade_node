@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const https = require('https');
-const fs = require('fs');
+const http = require('http'); // Cambio de 'https' a 'http'
 const app = express();
 const path = require('path');
 
@@ -11,17 +10,9 @@ app.use('/', require('./router'));
 app.use(express.static('public'));
 app.use('/pdfs', express.static(path.join(__dirname, 'PDF_ECOMAS')));
 
-// Configuración de certificado y clave
-const certificatePath = '/etc/letsencrypt/live/ecomas.pe/fullchain.pem';
-const privateKeyPath = '/etc/letsencrypt/live/ecomas.pe/privkey.pem';
-const credentials = {
-  key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath),
-};
+// Crear servidor HTTP en lugar de HTTPS
+const httpServer = http.createServer(app);
 
-// Crear servidor HTTPS
-const httpsServer = https.createServer(credentials, app);
-
-httpsServer.listen(4000, () => {
-  console.log('HTTPS SERVER Running in https://localhost:4000');
+httpServer.listen(4000, () => {
+  console.log('HTTP SERVER Running in http://localhost:4000'); // Actualización del mensaje
 });

@@ -27,7 +27,7 @@ router.get("/server/students", (req, res) => {
     if (error) {
       throw error;
     } else {
-      res.send({ results: results });
+      res.send(results);
     }
   });
 });
@@ -45,50 +45,29 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
     Fecha,
   } = req.body;
 
-  // Verificar si el campo "Codigo" es nulo o está vacío
   if (!Codigo) {
     return res.status(400).json({ error: "El campo 'Codigo' es obligatorio" });
   }
 
   const pdf = req.file ? req.file.filename : '';
 
-  const codeQuery = "SELECT * FROM participantes WHERE Codigo = ?";
-  conexion.query(codeQuery, [Codigo], (error, results) => {
-    if (error) {
-      return res.status(500).json({ error: "Error al consultar la base de datos" });
-    }
+  try {
+    const existingStudent = await getStudentByCode(Codigo);
 
-    if (results.length > 0) {
-      // Si el código ya existe, actualiza los datos del estudiante
-      const updateQuery =
-        "UPDATE participantes SET DNI = ?, Nombre = ?, ActividadAcademica = ?, Participacion = ?, Instituciones = ?, Horas = ?, Fecha = ?, pdf = ? WHERE Codigo = ?";
-      conexion.query(
-        updateQuery,
-        [
-          DNI,
-          Nombre,
-          ActividadAcademica,
-          Participacion,
-          Instituciones,
-          Horas,
-          Fecha,
-          pdf,
-          Codigo
-        ],
-        (error, result) => {
-          if (error) {
-            return res.status(500).json({
-              error: "Error al actualizar el participante en la base de datos",
-            });
-          }
-          return res
-            .status(200)
-            .json({ message: "Estudiante actualizado correctamente" });
-        }
-      );
+    if (existingStudent) {
+      await updateStudent(existingStudent.id, {
+        DNI,
+        Nombre,
+        ActividadAcademica,
+        Participacion,
+        Instituciones,
+        Horas,
+        Fecha,
+        pdf,
+      });
+      return res.status(200).json({ message: "Estudiante actualizado correctamente" });
     } else {
-      // Si el código no existe, agrega un nuevo estudiante
-      const newStudent = {
+      await saveStudent({
         DNI,
         Nombre,
         Codigo,
@@ -97,23 +76,56 @@ router.post('/server/students/save', upload.single('PDF'), async (req, res) => {
         Instituciones,
         Horas,
         Fecha,
-        pdf
-      };
-
-      const insertQuery = "INSERT INTO participantes SET ?";
-      conexion.query(insertQuery, newStudent, (error, result) => {
-        if (error) {
-          return res.status(500).json({
-            error: "Error al guardar el participante en la base de datos",
-          });
-        }
-        return res
-          .status(200)
-          .json({ message: "Estudiante guardado correctamente" });
+        pdf,
       });
+      return res.status(200).json({ message: "Estudiante guardado correctamente" });
     }
-  });
+  } catch (error) {
+    return res.status(500).json({ error: "Error al procesar la solicitud" });
+  }
 });
+
+// Función para obtener un estudiante por código
+function getStudentByCode(code) {
+  return new Promise((resolve, reject) => {
+    const codeQuery = "SELECT * FROM participantes WHERE Codigo = ?";
+    conexion.query(codeQuery, [code], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results.length > 0 ? results[0] : null);
+      }
+    });
+  });
+}
+
+// Función para actualizar un estudiante existente
+function updateStudent(id, data) {
+  return new Promise((resolve, reject) => {
+    const query = `UPDATE participantes SET ? WHERE id = ?`;
+    conexion.query(query, [data, id], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+// Función para guardar un nuevo estudiante
+function saveStudent(data) {
+  return new Promise((resolve, reject) => {
+    const query = `INSERT INTO participantes SET ?`;
+    conexion.query(query, data, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
 
 
 
