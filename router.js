@@ -10,7 +10,7 @@ const fs = require('fs');
 // File upload configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'PDF_CIMADE/'); // The folder where PDFs will be saved on the server
+    cb(null, 'PDF_FOLDER/'); // The folder where PDFs will be saved on the server
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -127,8 +127,6 @@ function saveStudent(data) {
   });
 }
 
-
-
 router.delete("/server/students/delete/:codigo",(req, res) => {
   const studentCodigo = req.params.codigo;
   const deleteQuery = "DELETE FROM participantes WHERE Codigo = ?";
@@ -144,6 +142,56 @@ router.delete("/server/students/delete/:codigo",(req, res) => {
     res.json({ message: "Estudiante eliminado exitosamente" });
   });
 });
+
+router.get('/server/students/search/dni/:dni', (req, res) => {
+  const studentDNI = req.params.dni;
+  const searchByDNIQuery = 'SELECT * FROM participantes WHERE DNI = ?';
+  conexion.query(searchByDNIQuery, [studentDNI], (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: 'Error al buscar por DNI' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Estudiante no encontrado' });
+    }
+
+    res.json(results);
+  });
+});
+
+router.get('/server/students/search/code/:codigo', (req, res) => {
+  const studentCodigo = req.params.codigo;
+  const searchByCodeQuery = 'SELECT * FROM participantes WHERE Codigo = ?';
+  conexion.query(searchByCodeQuery, [studentCodigo], (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: 'Error al buscar por código' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Estudiante no encontrado' });
+    }
+
+    res.json(results);
+  });
+});
+
+
+router.get('/server/students/search/name/:nombre', (req, res) => {
+  const studentName = req.params.nombre;
+  const searchByNameQuery = 'SELECT * FROM participantes WHERE Nombre LIKE ?';
+  conexion.query(searchByNameQuery, [`%${studentName}%`], (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: 'Error al buscar por nombre' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Estudiante no encontrado' });
+    }
+    
+    res.json(results);
+  });
+});
+
 
 
 module.exports = router;  
